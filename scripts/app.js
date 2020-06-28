@@ -16,34 +16,41 @@ let alienFire = Math.floor((Math.random() * (4 - 2)) + 2);
 let alienAccu = (Math.random() * (0.8 - 0.6)) + 0.6;
 
 ///////////////////////////////////////////////
+// GLOBAL VARIABLES 
+// SO THAT THE VALUES CAN BE USED LATER
+///////////////////////////////////////////////
+let alienHealthBar;
+let yourHealthBar;
+
+///////////////////////////////////////////////
 // ACTOR CLASS
 ///////////////////////////////////////////////
 class Actor {
     constructor(hull, fire, accu) {
-        this.hull = Math.floor(hull);
-        this.fire = Math.floor(fire);
-        this.accu = Math.floor(accu);
+        this.hull = hull;
+        this.fire = fire;
+        this.accu = accu;
     };
     // Function that powers YOUR attack
     yourAttack() {
         alert("You are attacking the alien ship!");
-        let yourHealthBar = this.hull;
+        alienHealthBar = this.hull;
         if (this.accu > Math.random()) {
-            yourHealthBar = this.hull - this.fire;
-            return this.hull, this.accu, this.fire, yourHealthBar, alert(`You hit the alien with ${this.fire} firepower and they have ${yourHealthBar} life left!`);
-        } else {
-            return this.hull, this.accu, this.fire, yourHealthBar, alert(`You missed! The alien has ${yourHealthBar} life left!`);
+            alienHealthBar = this.hull - 5;
+            return this.hull, this.accu, this.fire, alienHealthBar, alert(`You hit the alien and they have ${alienHealthBar} life left!`);
+        } else if (this.accu < Math.random()) {
+            return this.hull, this.accu, this.fire, alienHealthBar, alert(`You missed! The alien has ${alienHealthBar} life left!`);
         };
     };
     // Function that powers ALIEN attack
     alienAttack() {
         alert("The alien ship is attacking you!");
-        let alienHealthBar = this.hull;
+        yourHealthBar = this.hull;
         if (this.accu > Math.random()) {
-            alienHealthBar = this.hull - this.fire;
-            return this.hull, this.accu, this.fire, alienHealthBar, alert(`The alien ship has hit you with ${this.fire} firepower! And you now have ${alienHealthBar} life left!`);
-        } else {
-            return this.hull, this.accu, this.fire, alienHealthBar, alert(`They missed! You still have ${alienHealthBar} life left!`);
+            yourHealthBar = this.hull - this.fire;
+            return this.hull, this.accu, this.fire, yourHealthBar, alert(`The alien ship has hit you with ${Math.floor(this.fire)} firepower! And you now have ${yourHealthBar} life left!`);
+        } else if (this.accu < Math.random()) {
+            return this.hull, this.accu, this.fire, yourHealthBar, alert(`They missed! You still have ${yourHealthBar} life left!`);
         };
     };
 };
@@ -85,44 +92,35 @@ let retreatOptions = () => {
 };
 
 ////////////////////////////////////////////////
-// PLAYING OF GAME
+// PLAYING OF GAME: 3 Steps
 ////////////////////////////////////////////////
 // Step 1
 welcomePlay();
 let action = prompt("What do you want to do?", "ATTACK or RUN");
 // Step 2
 while (action.toUpperCase() === "ATTACK") {
-    alienHealthBar = alien.hull;
-    yourHealthBar = ussSchwar.hull;
-    do {
-        alien.yourAttack();
+        do {
+            alien.yourAttack();
 
-        if (alienHealthBar <= 0) {
-            prompt("An enemy ship has been destroyed! What do you want to do?", "ATTACK or RUN");
+            if (alienHealthBar <= 0) {
+                prompt("An enemy ship has been destroyed! Another ship has arrived. What do you want to do?", "ATTACK or RUN");
+            } else if (alienHealthBar > 0) {
+                ussSchwar.alienAttack();
+                yourHealthBar = yourHealthBar - alien.fire;
+                action = prompt("What do you want to do?", "ATTACK or RUN");
+            };
+            if (yourHealthBar <= 0) {
+                alert("Your ship has been destroyed. YOU LOSE!");
+            }
 
-        } else if (alienHealthBar > 0) {
-            ussSchwar.alienAttack();
-
-        }
-        if (yourHealthBar <= 0) {
-            alert("Your ship has been destroyed. YOU LOSE!");
-        }
-        
-        action = prompt("What do you want to do?", "ATTACK or RUN");
-    } while (yourHealthBar > 0) {
-
-    };
-
+        } while (yourHealthBar > 0) {
+            // while part of do while loop
+        };
 };
-
 // Step 3
 if (action.toUpperCase() === "RUN") {
     retreatOptions();
 };
-
-
-
-
 
 // Prompts and alerts
 // prompt("Are you cowering in retreat?", "YES or NO")
